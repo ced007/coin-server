@@ -14,6 +14,7 @@ module.exports = (request, response) =>{
             newData = ({
                 ...newData,
                 today: currentDay, 
+                presentDayIndex: newData.presentDayIndex + 1,
                 isTodayClaimed: false,
                 spinCount:3,
                 totalSpinsPerDay: 3,

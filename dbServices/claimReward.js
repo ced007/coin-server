@@ -11,7 +11,6 @@ module.exports = (request, response) =>{
         let newData = JSON.parse(result);
         newData = ({
             ...newData, 
-            presentDayIndex:newData.presentDayIndex < 6 ? newData.presentDayIndex + 1 : 0,
             totalPoints: newData.totalPoints + request.body.bonus, 
             isTodayClaimed: true,
             dailyRewards: newData.dailyRewards.map(elem =>{
