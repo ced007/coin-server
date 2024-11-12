@@ -6,7 +6,7 @@ require("dotenv").config();
 
 
 
-const bot = new Telegraf("7521357146:AAEfYV6kwxbWM6EpA0CkzIndZnBDr2gu44s");
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
     bot.start((ctx) => {
         ctx.reply(`welcome ${ctx.update.message.chat.username}`, {
