@@ -11,7 +11,7 @@ module.exports = (request, response) =>{
 
         let newData = JSON.parse(result);
 
-            newData = ({
+            newData = {
                 ...newData,
                 today: currentDay, 
                 presentDayIndex: newData.presentDayIndex + 1,
@@ -19,12 +19,12 @@ module.exports = (request, response) =>{
                 spinCount:3,
                 totalSpinsPerDay: 3,
                 allowedDailySpins:15, 
-                isDaysReset: newData.presentDayIndex > 6 ? true: false,
-            });
+                isDaysReset: (newData.presentDayIndex > 6) || (newData.isTodayClaimed === false) ? true: false,
+            };
                 
-            fs.writeFile(path.resolve(__dirname,`../database/${userToken}.txt`), JSON.stringify({...newData}), (err)=>{
+            fs.writeFile(path.resolve(__dirname,`../database/${userToken}.txt`), JSON.stringify(newData), (err)=>{
                 if(err)return;
-                response.status(200).json({success:true, message:{...newData}});
+                response.status(200).json({success:true, message:newData});
             });
         
 

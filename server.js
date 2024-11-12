@@ -12,5 +12,5 @@ app.use(express.json());
 
 
 app.use(require("./router/router"));
-require("./bot");
+//require("./bot");
 app.listen(port, () => console.log("server running on port 4500"));

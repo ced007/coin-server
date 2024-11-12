@@ -16,8 +16,8 @@ router.get("/get-ip", (request, response) =>{
 
 router.post("/sign-up", (request, response) =>{
 
-    let  serverData  = request.body.serverData.split(',');
-    serverData = {username:serverData[0], startPayload:serverData[1] || null};
+    let  serverData  = request.body.serverData.includes(",") ? request.body.serverData.split(',') : [request.body.serverData,null];
+    serverData = {username:serverData[0], startPayload:serverData[1]};
 
 
     fs.readFile(path.resolve(__dirname,"../database/users.txt"), "utf-8", (err, result) =>{

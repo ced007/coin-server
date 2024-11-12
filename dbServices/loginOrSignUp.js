@@ -3,23 +3,23 @@ const [path, fs] = [require("path"), require("fs")];
 
 
 module.exports = (request, response, serverData) =>{
-    const  userToken  = serverData.username;
 
-
-    fs.readFile(path.resolve(__dirname, `../database/${userToken}.txt`), "utf-8", (err, result) =>{
+    fs.readFile(path.resolve(__dirname, `../database/${serverData.username}.txt`), "utf-8", (err, result) =>{
         if(err){
-            fs.writeFile(path.resolve(__dirname, `../database/${userToken}.txt`), JSON.stringify({
+            const newData = {
                 ...request.body,
                 serverCookie:serverData.username, 
                 ...serverData, 
                 ip:request.socket.remoteAddress
-            }), (err) =>{
+            };
+
+            fs.writeFile(path.resolve(__dirname, `../database/${serverData.username}.txt`), JSON.stringify(newData), (err) =>{
                 if(err)return;
-                response.status(200).json({success:true, message:{...request.body, serverCookie:serverData.username}});
+                response.status(200).json({success:true, message:newData});
             })
             return;
         }
 
-        response.status(200).json({success:true, message:JSON.parse({...result})});
+        response.status(200).json({success:true, message:JSON.parse(result)});
     })
 };
