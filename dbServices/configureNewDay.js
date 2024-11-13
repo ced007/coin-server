@@ -19,7 +19,7 @@ module.exports = (request, response) =>{
                 spinCount:3,
                 totalSpinsPerDay: 3,
                 allowedDailySpins:15, 
-                isDaysReset: (newData.presentDayIndex > 6) || (newData.isTodayClaimed === false) ? true: false,
+                isDaysReset: newData.presentDayIndex > 6 ? true: false,
             };
                 
             fs.writeFile(path.resolve(__dirname,`../database/${userToken}.txt`), JSON.stringify(newData), (err)=>{
