@@ -1,21 +1,26 @@
-const [path, fs] = [require("path"), require("fs")];
+const db = require("../database/model");
 
-module.exports = (request, response) =>{
+module.exports = async(request, response) =>{
     const { userToken, spinVal } = request.body;
 
-    fs.readFile(path.resolve(__dirname,`../database/${userToken}.txt`), "utf-8", (err, result)=>{
-        if(err)return console.log(err);
 
-        let newData = JSON.parse(result);
-        newData = ({
-            ...newData, 
-            totalPoints: newData.totalPoints + spinVal,
-            spinCount: newData.spinCount > 0 ? newData.spinCount - 1 : 0,
-        });
+    try {
 
-        fs.writeFile(path.resolve(__dirname,`../database/${userToken}.txt`), JSON.stringify(newData), (err)=>{
-            if(err)return console.log(err);
-            response.status(200).json({success:true, message:newData});
-        });
-    });
+        let resData = await db.findOne({serverCookie: userToken});
+
+        resData = await db.updateOne({ serverCookie: userToken}, {
+            totalPoints: resData.totalPoints + spinVal,
+            spinCount: resData.spinCount > 0 ? resData.spinCount - 1 : 0,
+        })
+
+        if(resData){
+            const final = await db.findOne({serverCookie: userToken})
+            response.status(200).json({success:true, message: final});
+        }else{
+            throw new Error("error in adding count");
+        }
+    } catch (error) {
+        console.log(error);
+    }
+       
 }

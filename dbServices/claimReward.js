@@ -1,29 +1,37 @@
-const [path, fs] = [require("path"), require("fs")];
+const db = require("../database/model");
 
 
 
-module.exports = (request, response) =>{
-    const { userToken } = request.body;
+module.exports = async(request, response) =>{
+    const { userToken, bonus, day } = request.body;
 
-    fs.readFile(path.resolve(__dirname,`../database/${userToken}.txt`), "utf-8", (err, result)=>{
-        if(err)return;
 
-        let newData = JSON.parse(result);
-        newData = ({
-            ...newData, 
-            totalPoints: newData.totalPoints + request.body.bonus, 
-            isTodayClaimed: true,
-            dailyRewards: newData.dailyRewards.map(elem =>{
-                if(elem.day === request.body.day){
-                    return ({...elem, isClaimed: true});
-                }
-                return elem;
-            })
-        });
+        try {
+
+            let resData = await db.findOne({serverCookie: userToken});
             
-        fs.writeFile(path.resolve(__dirname,`../database/${userToken}.txt`), JSON.stringify(newData), (err)=>{
-            if(err)return;
-            response.status(200).json({success:true, message:newData});
-        });
-    });
+            resData = {
+                totalPoints: resData.totalPoints + bonus, 
+                isTodayClaimed: true,
+                dailyRewards: { 
+                    rewards : resData.dailyRewards.rewards.map(elem =>{
+                        if(elem.day === day){
+                            return ({...elem, isClaimed: true});
+                        }
+                        return elem;
+                    })
+                }
+            }
+            resData = await db.updateOne({ serverCookie: userToken}, resData);
+    
+            if(resData){
+                const final = await db.findOne({serverCookie: userToken});
+                response.status(200).json({success:true, message: final});
+            }else{
+                throw new Error("error in adding count");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+      
 }

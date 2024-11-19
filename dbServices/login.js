@@ -1,13 +1,21 @@
-const [path, fs] = [require("path"), require("fs")];
+const db = require("../database/model");
 
 
 
-module.exports = (request, response, serverData) =>{
+module.exports = async(request, response, serverData) =>{
 
-    fs.readFile(path.resolve(__dirname, `../database/${serverData.username}.txt`), "utf-8", (err, result) =>{
-        if(err)return;
+    try {
+        
+        const resData = await db.findOne({ serverCookie: serverData.username});
+        if(!resData){
+            throw new Error("signup")
+        }else{
+            response.status(200).json({ success:true, message: resData});
+        }
 
-        response.status(200).json({success:true, message:JSON.parse(result)});
-       
-    })
+    } catch (error) {
+        
+        require("./signUp")(request,response,serverData);
+
+    }
 };

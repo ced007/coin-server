@@ -1,22 +1,30 @@
-const [path, fs] = [require("path"), require("fs")];
+const db = require("../database/model");
 
-module.exports = (request, response) =>{
+module.exports = async(request, response) =>{
     const { userToken } = request.body;
 
-    fs.readFile(path.resolve(__dirname,`../database/${userToken}.txt`), "utf-8", (err, result)=>{
-        if(err)return console.log(err);
+   
 
-        let newData = JSON.parse(result);
-        newData = ({
-            ...newData, 
-            spinCount: newData.spinCount + 10,
-            totalSpinsPerDay: newData.totalSpinsPerDay + 10,
-            allowedDailySpins: newData.allowedDailySpins > 0 ? newData.allowedDailySpins - 1 : 0,
+
+    try {
+
+        let resData = await db.findOne({serverCookie: userToken});
+
+
+        resData = await db.updateOne({ serverCookie: userToken}, {
+            spinCount: resData.spinCount + 10,
+            totalSpinsPerDay: resData.totalSpinsPerDay + 10,
+            allowedDailySpins: resData.allowedDailySpins > 0 ? resData.allowedDailySpins - 1 : 0,
         });
 
-        fs.writeFile(path.resolve(__dirname,`../database/${userToken}.txt`), JSON.stringify(newData), (err)=>{
-            if(err)return console.log(err);
-            response.status(200).json({success:true, message:newData});
-        });
-    });
+        if(resData){
+            const final = await db.findOne({serverCookie: userToken})
+            response.status(200).json({success:true, message: final});
+        }else{
+            throw new Error("error in adding count");
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
 }

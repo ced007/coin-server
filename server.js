@@ -9,8 +9,9 @@ dotenv.config();
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+require("./database/connect");
 
 
 app.use(require("./router/router"));
-require("./bot");
+//require("./bot");
 app.listen(port, () => console.log("server running on port 4500"));

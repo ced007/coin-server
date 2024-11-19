@@ -1,18 +1,27 @@
-const [path, fs] = [require("path"), require("fs")];
+const db = require("../database/model");
 
-module.exports = (request, response) =>{
+module.exports = async(request, response) =>{
     const { userToken, platform, points } = request.body;
 
-    fs.readFile(path.resolve(__dirname, `../database/${userToken}.txt`), "utf-8", (err, result)=>{
-        if(err)return;
 
-        let newData = JSON.parse(result);
+    try {
 
-        newData = ({...newData, [platform]:"followed", totalPoints: newData.totalPoints + points});
+        let resData = await db.findOne({serverCookie: userToken});
 
-        fs.writeFile(path.resolve(__dirname, `../database/${userToken}.txt`), JSON.stringify(newData), (err)=>{
-            if(err)return;
-            response.status(200).json({success:true, message:newData})
-        })
-    });
+
+        resData = await db.updateOne({ serverCookie: userToken}, {
+            [platform]:"followed", 
+            totalPoints: resData.totalPoints + points
+        });
+
+        if(resData){
+            const final = await db.findOne({serverCookie: userToken})
+            response.status(200).json({success:true, message: final});
+        }else{
+            throw new Error("error in adding count");
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
 }
