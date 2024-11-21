@@ -1,11 +1,10 @@
 const db = require("../database/model");
 
 
-const currentDay = new Date().getUTCDay();
 
 module.exports = async(request, response) =>{
 
-    const { userToken } = request.body;
+    const { userToken, day } = request.body;
 
 
     try {
@@ -13,7 +12,7 @@ module.exports = async(request, response) =>{
         let resData = await db.findOne({serverCookie: userToken});
 
         resData = {
-            today: currentDay, 
+            today: day, 
             presentDayIndex: resData.presentDayIndex + 1,
             isTodayClaimed: false,
             spinCount:3,
