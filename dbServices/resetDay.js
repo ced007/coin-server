@@ -15,6 +15,7 @@ module.exports = async(request, response) =>{
             totalSpinsPerDay: 3,
             allowedDailySpins:15,
             presentDayIndex:0,
+            isDaysReset: false,
             dailyRewards: {
                 rewards : Array.from({length:7},(_,n)=>({day:n, bonus:(n+1)*35, isClaimed:false}))
             }  
