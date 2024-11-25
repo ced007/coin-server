@@ -18,7 +18,7 @@ module.exports = async(request, response) =>{
             spinCount:3,
             totalSpinsPerDay: 3,
             allowedDailySpins:15, 
-            isDaysReset: resData.presentDayIndex > 6 ? true: false,
+            isDaysReset: resData.presentDayIndex > 6 || resData.isTodayClaimed === false ? true: false,
         };
 
         resData = await db.updateOne({ serverCookie: userToken}, resData);
