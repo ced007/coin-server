@@ -4,7 +4,7 @@ const db = require("../database/model");
 
 module.exports = async(request, response) =>{
 
-    const { userToken, day } = request.body;
+    const { userToken } = request.body;
 
 
     try {
@@ -12,7 +12,6 @@ module.exports = async(request, response) =>{
         let resData = await db.findOne({serverCookie: userToken});
 
         resData = {
-            today: day, 
             presentDayIndex: resData.presentDayIndex + 1,
             isTodayClaimed: false,
             spinCount:3,
