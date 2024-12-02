@@ -4,7 +4,7 @@ const db = require("../database/model");
 
 module.exports = async(request, response) =>{
 
-    const { userToken } = request.body;
+    const { userToken, newDay } = request.body;
 
 
     try {
@@ -17,6 +17,7 @@ module.exports = async(request, response) =>{
             spinCount:3,
             totalSpinsPerDay: 3,
             allowedDailySpins:15, 
+            today: newDay,
             isDaysReset: resData.presentDayIndex > 6 || resData.isTodayClaimed === false ? true: false,
         };
 
