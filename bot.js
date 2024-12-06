@@ -15,8 +15,6 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
                     [
                         {text:"play", web_app: {url:`https://ced-asiko-bot.netlify.app/start-app/${ctx?.update?.message?.chat?.username ?? ctx?.update?.message?.chat?.id},${ctx.startPayload}`}}
                     ],
-                    resize_keyboard: true,
-                    one_time_keyboard: true,
                 ]
             }
         });
